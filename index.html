@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Drive PDF Browser</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .folder-info {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            width: 100%;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        
+        .main-content {
+            display: flex;
+            min-height: 600px;
+        }
+        
+        .sidebar {
+            width: 300px;
+            border-right: 1px solid #eaeaea;
+            padding: 25px;
+            background-color: #f9fafc;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .breadcrumb a {
+            color: #4285f4;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .breadcrumb a:hover {
+            color: #0d47a1;
+            text-decoration: underline;
+        }
+        
+        .breadcrumb span {
+            margin: 0 8px;
+            color: #888;
+        }
+        
+        .folder-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .folder-list li {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+        
+        .folder-list li:hover {
+            background-color: #e8f0fe;
+            color: #4285f4;
+        }
+        
+        .folder-list li.active {
+            background-color: #e8f0fe;
+            color: #4285f4;
+            font-weight: 600;
+            border-left: 4px solid #4285f4;
+        }
+        
+        .folder-list i {
+            font-size: 1.2rem;
+        }
+        
+        .content-area {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .content-header h2 {
+            color: #444;
+            font-size: 1.5rem;
+        }
+        
+        .file-count {
+            background-color: #f1f3f4;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #5f6368;
+        }
+        
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        
+        .file-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #eaeaea;
+        }
+        
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .file-icon {
+            background-color: #fce8e6;
+            color: #d93025;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+        }
+        
+        .file-info {
+            padding: 18px;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.8em;
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary {
+            background-color: #4285f4;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3367d6;
+        }
+        
+        .btn-secondary {
+            background-color: #f1f3f4;
+            color: #5f6368;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e8eaed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #5f6368;
+        }
+        
+        .loading i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #4285f4;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #5f6368;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #dadce0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eaeaea;
+            margin-top: 20px;
+        }
+        
+        .error-message {
+            background-color: #fce8e6;
+            color: #c5221f;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #c5221f;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #eaeaea;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .file-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fab fa-google-drive"></i>
+                <h1>Google Drive PDF Browser</h1>
+            </div>
+            <div class="folder-info">
+                <strong>Folder ID:</strong> 1dvXf7ryLywkP00sw16XLpCG0rWZhT2IH
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="breadcrumb" id="breadcrumb">
+                    <a href="#" class="root-folder">Google Drive</a>
+                </div>
+                
+                <h3>Folder & Subfolder</h3>
+                <ul class="folder-list" id="folderList">
+                    <!-- Folder akan dimuat di sini -->
+                </ul>
+            </div>
+            
+            <div class="content-area">
+                <div class="content-header">
+                    <h2 id="currentFolder">Memuat...</h2>
+                    <div class="file-count" id="fileCount">0 file</div>
+                </div>
+                
+                <div id="content">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Memuat konten folder...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Aplikasi ini menggunakan Google Drive API untuk mengakses dan menampilkan file PDF</p>
+            <p>File yang ditampilkan hanya dapat diunduh melalui link langsung dari Google Drive</p>
+        </footer>
+    </div>
+
+    <script>
+        // Konfigurasi
+        const FOLDER_ID = '1dvXf7ryLywkP00sw16XLpCG0rWZhT2IH';
+        const API_KEY = 'AIzaSyBq3ZOfHt-MCgrjG6H1hLqLrsK6NfR6bQY'; // API key publik untuk akses terbatas
+        const BASE_URL = 'https://www.googleapis.com/drive/v3/files';
+        
+        // State aplikasi
+        let currentFolderId = FOLDER_ID;
+        let currentFolderName = 'Root Folder';
+        let folderHistory = [{ id: FOLDER_ID, name: 'Root Folder' }];
+        
+        // Elemen DOM
+        const folderListEl = document.getElementById('folderList');
+        const contentEl = document.getElementById('content');
+        const breadcrumbEl = document.getElementById('breadcrumb');
+        const currentFolderEl = document.getElementById('currentFolder');
+        const fileCountEl = document.getElementById('fileCount');
+        
+        // Fungsi untuk mendapatkan URL file Google Drive yang dapat diunduh
+        function getDownloadUrl(fileId) {
+            return `https://drive.google.com/uc?export=download&id=${fileId}`;
+        }
+        
+        // Fungsi untuk mendapatkan URL preview file
+        function getPreviewUrl(fileId) {
+            return `https://drive.google.com/file/d/${fileId}/preview`;
+        }
+        
+        // Fungsi untuk memuat folder dan file
+        async function loadFolderContents(folderId = FOLDER_ID, folderName = 'Root Folder') {
+            // Update state
+            currentFolderId = folderId;
+            currentFolderName = folderName;
+            currentFolderEl.textContent = folderName;
+            
+            // Tampilkan loading state
+            contentEl.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Memuat konten folder "${folderName}"...</p>
+                </div>
+            `;
+            
+            // Kosongkan daftar folder
+            folderListEl.innerHTML = '';
+            
+            try {
+                // URL untuk mengambil file dan folder di dalam folder saat ini
+                const url = `${BASE_URL}?q='${folderId}'+in+parents+and+trashed=false&key=${API_KEY}&fields=files(id,name,mimeType,size,modifiedTime)&orderBy=name`;
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Gagal mengambil data: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Filter dan pisahkan folder dan file PDF
+                const folders = data.files.filter(file => file.mimeType === 'application/vnd.google-apps.folder');
+                const pdfFiles = data.files.filter(file => file.mimeType === 'application/pdf');
+                
+                // Update jumlah file
+                fileCountEl.textContent = `${pdfFiles.length} file PDF`;
+                
+                // Tampilkan daftar folder di sidebar
+                if (folders.length > 0) {
+                    folders.forEach(folder => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <i class="fas fa-folder"></i>
+                            <span>${folder.name}</span>
+                        `;
+                        li.addEventListener('click', () => {
+                            // Tambahkan ke riwayat folder
+                            folderHistory.push({ id: folder.id, name: folder.name });
+                            updateBreadcrumb();
+                            loadFolderContents(folder.id, folder.name);
+                        });
+                        folderListEl.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.innerHTML = '<i class="fas fa-folder-open"></i><span>Tidak ada subfolder</span>';
+                    li.style.color = '#888';
+                    li.style.cursor = 'default';
+                    folderListEl.appendChild(li);
+                }
+                
+                // Tampilkan file PDF di area konten
+                if (pdfFiles.length > 0) {
+                    let filesHTML = '<div class="file-grid">';
+                    
+                    pdfFiles.forEach(file => {
+                        const fileSize = file.size ? formatFileSize(file.size) : 'Ukuran tidak tersedia';
+                        const modifiedDate = new Date(file.modifiedTime).toLocaleDateString('id-ID');
+                        
+                        filesHTML += `
+                            <div class="file-card">
+                                <div class="file-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="file-info">
+                                    <div class="file-name" title="${file.name}">${file.name}</div>
+                                    <div style="font-size: 0.85rem; color: #666;">
+                                        <div>${fileSize}</div>
+                                        <div>Diubah: ${modifiedDate}</div>
+                                    </div>
+                                    <div class="file-actions">
+                                        <button class="btn btn-primary download-btn" data-file-id="${file.id}" data-file-name="${file.name}">
+                                            <i class="fas fa-download"></i> Unduh
+                                        </button>
+                                        <button class="btn btn-secondary preview-btn" data-file-id="${file.id}">
+                                            <i class="fas fa-eye"></i> Lihat
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    filesHTML += '</div>';
+                    contentEl.innerHTML = filesHTML;
+                    
+                    // Tambahkan event listener untuk tombol unduh
+                    document.querySelectorAll('.download-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const fileId = this.getAttribute('data-file-id');
+                            const fileName = this.getAttribute('data-file-name');
+                            downloadFile(fileId, fileName);
+                        });
+                    });
+                    
+                    // Tambahkan event listener untuk tombol preview
+                    document.querySelectorAll('.preview-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const fileId = this.getAttribute('data-file-id');
+                            previewFile(fileId);
+                        });
+                    });
+                } else {
+                    contentEl.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-file-pdf"></i>
+                            <h3>Tidak ada file PDF di folder ini</h3>
+                            <p>Folder "${folderName}" tidak mengandung file PDF.</p>
+                            <p>Silakan pilih folder lain atau cek subfolder.</p>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                contentEl.innerHTML = `
+                    <div class="error-message">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Gagal memuat konten folder</h3>
+                        <p>${error.message}</p>
+                        <p>Pastikan Anda terhubung ke internet dan Folder ID benar.</p>
+                        <button class="btn btn-primary" onclick="loadFolderContents(FOLDER_ID, 'Root Folder')">
+                            <i class="fas fa-redo"></i> Coba Lagi
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Fungsi untuk memperbarui breadcrumb
+        function updateBreadcrumb() {
+            breadcrumbEl.innerHTML = '';
+            
+            folderHistory.forEach((folder, index) => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.textContent = folder.name;
+                link.classList.add('breadcrumb-link');
+                
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Potong riwayat hingga folder yang diklik
+                    folderHistory = folderHistory.slice(0, index + 1);
+                    updateBreadcrumb();
+                    loadFolderContents(folder.id, folder.name);
+                });
+                
+                breadcrumbEl.appendChild(link);
+                
+                // Tambahkan pemisah jika bukan item terakhir
+                if (index < folderHistory.length - 1) {
+                    const separator = document.createElement('span');
+                    separator.textContent = '›';
+                    breadcrumbEl.appendChild(separator);
+                }
+            });
+        }
+        
+        // Fungsi untuk mengunduh file
+        function downloadFile(fileId, fileName) {
+            const downloadUrl = getDownloadUrl(fileId);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Tampilkan notifikasi
+            showNotification(`Mengunduh "${fileName}"...`);
+        }
+        
+        // Fungsi untuk melihat preview file
+        function previewFile(fileId) {
+            const previewUrl = getPreviewUrl(fileId);
+            window.open(previewUrl, '_blank');
+        }
+        
+        // Fungsi untuk memformat ukuran file
+        function formatFileSize(bytes) {
+            if (bytes === 0 || !bytes) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Fungsi untuk menampilkan notifikasi
+        function showNotification(message) {
+            // Hapus notifikasi sebelumnya jika ada
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Buat elemen notifikasi
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div style="position: fixed; bottom: 20px; right: 20px; background-color: #34a853; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Hapus notifikasi setelah 3 detik
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Inisialisasi aplikasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFolderContents(FOLDER_ID, 'Root Folder');
+            
+            // Tambahkan event listener untuk folder root di breadcrumb
+            const rootFolderLink = document.querySelector('.root-folder');
+            rootFolderLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                folderHistory = [{ id: FOLDER_ID, name: 'Root Folder' }];
+                updateBreadcrumb();
+                loadFolderContents(FOLDER_ID, 'Root Folder');
+            });
+        });
+    </script>
+</body>
+</html>
