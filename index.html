@@ -2,349 +2,56 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SKP LAPAS BAUBAU</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
+        /* Menghilangkan margin bawaan browser */
+        body, html {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #333;
-        }
-        
-        .container {
+            height: 100%;
             width: 100%;
-            max-width: 800px;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            padding: 30px;
-            text-align: center;
+            overflow: hidden; /* Mencegah double scrollbar */
+            background-color: #ffffff;
         }
-        
-        .header {
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
-            color: #2c3e50;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-            line-height: 1.5;
-        }
-        
-        .link-container {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 25px 0;
-            border: 2px dashed #6a11cb;
-            transition: all 0.3s ease;
-        }
-        
-        .link-container:hover {
-            border-style: solid;
-            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.1);
-        }
-        
-        .url-display {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            word-break: break-all;
-            font-size: 0.95rem;
-            color: #555;
-            border: 1px solid #ddd;
-            text-align: left;
-            max-height: 120px;
-            overflow-y: auto;
-        }
-        
-        .link-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: white;
-            text-decoration: none;
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.3);
+
+        /* Mengatur frame agar memenuhi layar */
+        .web-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
             width: 100%;
-            max-width: 400px;
-            margin: 10px 0;
+            height: 100%;
+            border: none;
+            display: block;
         }
-        
-        .link-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(37, 117, 252, 0.4);
-            background: linear-gradient(to right, #2575fc, #6a11cb);
-        }
-        
-        .link-button i {
-            margin-right: 12px;
-            font-size: 1.3rem;
-        }
-        
-        .device-icons {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-        
-        .device-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #2c3e50;
-            font-size: 0.9rem;
-            transition: transform 0.3s;
-        }
-        
-        .device-icon:hover {
-            transform: scale(1.1);
-        }
-        
-        .device-icon i {
-            font-size: 2.5rem;
-            margin-bottom: 8px;
-            color: #6a11cb;
-        }
-        
-        .instructions {
-            background: #f1f8ff;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 30px;
-            text-align: left;
-        }
-        
-        .instructions h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 10px;
-            line-height: 1.5;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            color: white;
-            text-align: center;
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .header p {
-                font-size: 1rem;
-            }
-            
-            .link-button {
-                padding: 16px 30px;
-                font-size: 1.1rem;
-            }
-            
-            .device-icons {
-                gap: 20px;
-            }
-            
-            .device-icon i {
-                font-size: 2rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .header h1 {
-                font-size: 1.7rem;
-            }
-            
-            .link-button {
-                padding: 14px 25px;
-                font-size: 1rem;
-            }
-            
-            .device-icons {
-                gap: 15px;
-            }
-            
-            .device-icon span {
-                font-size: 0.8rem;
-            }
-            
-            .instructions {
-                padding: 20px;
-            }
-        }
-        
-        /* Animasi */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .container {
-            animation: fadeIn 0.8s ease-out;
-        }
-        
-        .link-button {
-            animation: fadeIn 1s ease-out 0.3s both;
+
+        /* Loading indicator sederhana sebelum script terbuka */
+        .loading-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: Arial, sans-serif;
+            color: #666;
+            z-index: -1;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-external-link-alt"></i> Link Eksternal</h1>
-            <p>Halaman ini berisi tautan menuju SKP LAPAS BAUBAU. Klik tombol di bawah untuk mengaksesnya.</p>
-        </div>
-        
-        <div class="link-container">
-            <div class="url-display">
-                <strong>URL Tujuan:</strong><br>
-                https://script.google.com/macros/s/AKfycbyBgqBosO34ixH5hPJEJ4gEKKjDXXMnoF9TEfTNQLlIDA6ot4XEVFLWCYd8DDDDlZi1/exec
-            </div>
-            
-            <a href="https://script.google.com/macros/s/AKfycbyBgqBosO34ixH5hPJEJ4gEKKjDXXMnoF9TEfTNQLlIDA6ot4XEVFLWCYd8DDDDlZi1/exec" 
-               target="_blank" 
-               class="link-button" 
-               id="mainLink">
-                <i class="fas fa-external-link-alt"></i> Buka Link
-            </a>
-        </div>
-        
-        <div class="device-icons">
-            <div class="device-icon">
-                <i class="fas fa-desktop"></i>
-                <span>Desktop</span>
-            </div>
-            <div class="device-icon">
-                <i class="fas fa-laptop"></i>
-                <span>Laptop</span>
-            </div>
-            <div class="device-icon">
-                <i class="fas fa-tablet-alt"></i>
-                <span>Tablet</span>
-            </div>
-            <div class="device-icon">
-                <i class="fas fa-mobile-alt"></i>
-                <span>Smartphone</span>
-            </div>
-        </div>
-        
-        <div class="instructions">
-            <h3><i class="fas fa-info-circle"></i> Informasi Penting</h3>
-            <ul>
-                <li>Link ini akan membuka halaman Google Apps Script di tab/window baru.</li>
-                <li>Halaman ini telah dioptimalkan untuk semua perangkat (desktop, tablet, dan smartphone).</li>
-                <li>Jika link tidak berfungsi, pastikan koneksi internet Anda stabil.</li>
-                <li>Google Apps Script mungkin memerlukan izin akses ke akun Google Anda.</li>
-            </ul>
-        </div>
-    </div>
-    
-    <div class="footer">
-        <p>© 2024 - Halaman Link Responsif | Dibuat dengan HTML, CSS, dan JavaScript</p>
-    </div>
 
-    <script>
-        // Tambahkan event listener untuk tombol link
-        document.getElementById('mainLink').addEventListener('click', function() {
-            // Tambahkan efek loading
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuka...';
-            this.style.pointerEvents = 'none';
-            
-            // Kembalikan ke keadaan semula setelah 1.5 detik (simulasi loading)
-            setTimeout(() => {
-                this.innerHTML = originalText;
-                this.style.pointerEvents = 'auto';
-            }, 1500);
-        });
-        
-        // Tambahkan efek hover untuk semua tombol
-        const buttons = document.querySelectorAll('.link-button');
-        buttons.forEach(button => {
-            button.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-3px)';
-            });
-            
-            button.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
-        });
-        
-        // Deteksi perangkat pengguna
-        function detectDevice() {
-            const deviceIcons = document.querySelectorAll('.device-icon');
-            const userAgent = navigator.userAgent;
-            let activeDevice = 'desktop';
-            
-            if (/Mobi|Android/i.test(userAgent)) {
-                activeDevice = 'mobile';
-            } else if (/Tablet|iPad/i.test(userAgent)) {
-                activeDevice = 'tablet';
-            }
-            
-            // Highlight ikon perangkat yang sesuai
-            deviceIcons.forEach(icon => {
-                const deviceType = icon.querySelector('span').textContent.toLowerCase();
-                if (deviceType === activeDevice) {
-                    icon.style.color = '#2575fc';
-                    icon.querySelector('i').style.color = '#2575fc';
-                    icon.style.transform = 'scale(1.1)';
-                }
-            });
-        }
-        
-        // Panggil fungsi deteksi perangkat saat halaman dimuat
-        window.addEventListener('load', detectDevice);
-    </script>
+    <div class="loading-text">Memuat Aplikasi...</div>
+
+    <iframe 
+        src="https://script.google.com/macros/s/AKfycbyBgqBosO34ixH5hPJEJ4gEKKjDXXMnoF9TEfTNQLlIDA6ot4XEVFLWCYd8DDDDlZi1/exec" 
+        class="web-frame"
+        allow="geolocation; microphone; camera; clipboard-write;"
+        loading="lazy">
+        Browser Anda tidak mendukung frame. 
+        <a href="https://script.google.com/macros/s/AKfycbyBgqBosO34ixH5hPJEJ4gEKKjDXXMnoF9TEfTNQLlIDA6ot4XEVFLWCYd8DDDDlZi1/exec">Klik di sini untuk membuka langsung.</a>
+    </iframe>
+
 </body>
 </html>
